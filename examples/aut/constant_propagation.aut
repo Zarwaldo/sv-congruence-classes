@@ -1,0 +1,36 @@
+# Example analyzed by hand (round-robin iteration) with the constant domain.
+# This example shows the loss of precision of the MFP solution w.r.t. the
+# MOP solution.
+#
+# The final location q_bad is not reachable from q_0.  Indeed, in q_3, we
+# either have (x, y) = (1, 2) or (x, y) = (2, 1).  Hence, z = 3 in q_4.
+#
+# But non-reachability of q_4 cannot be shown with the MFP solution of a
+# non-relational analysis.  Indeed, with any non-relational abstract domain,
+# the concretizations of the abstract values of x and y in q_3 necessarily
+# contain 1 and 2, and so the concretization of the abstract value of z in
+# q_4 necessarily contains 2 and 4.
+
+Constant_Propagation
+{
+    var x, y, z;
+
+    initial q_0;
+    final q_bad;
+
+    from q_0
+    | x := 1 --> q_1;
+    | x := 2 --> q_2;
+
+    from q_1
+    | y := 2 --> q_3;
+
+    from q_2
+    | y := 1 --> q_3;
+
+    from q_3
+    | z := x + y --> q_4;
+
+    from q_4
+    | z != 3 --> q_bad;
+}

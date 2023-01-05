@@ -1,0 +1,71 @@
+Spa (simple program analyzers) is a collection of simple (and naive) program
+analysis tools:
+
+- bmc: bounded model checking                     [not included in this archive]
+- iic: inductive invariant checking               [not included in this archive]
+- sai: static abstract interpretation
+
+These tools have been developed to support a course on software verification.
+The focus is on simplicity and modularity, at the expense of efficiency.
+
+
+Build requirements
+--------------------------------------------------------------------------------
+
+- OCaml 4.07 or later           http://caml.inria.fr/ocaml/
+- Menhir                        http://gallium.inria.fr/~fpottier/menhir/
+- Zarith 1.10 or later          http://github.com/ocaml/Zarith
+- GNU make                      http://www.gnu.org/software/make/
+
+And at least one of the following OCaml build systems:
+
+- OCamlbuild                    http://github.com/ocaml/ocamlbuild
+- Dune + Odoc                   http://github.com/ocaml/{dune,odoc}
+
+
+Build instructions
+--------------------------------------------------------------------------------
+
+The default build system is dune. To use OCamlbuild instead, edit the Makefile
+and set the variable BUILDSYSTEM to `ocamlbuild'.
+
+Simply run `make' to build the tools.  This generates byte-code executables that
+can be debugged with ocamldebug(1).  You may also build native-code executables
+by using the makefile target `native'.
+
+The makefile has two additional useful targets.  The `doc' target generates the
+documentation.  The `test' target builds an executable that performs unit tests
+(runtests.byte) and then runs it.
+
+
+Input formats
+--------------------------------------------------------------------------------
+
+The tools analyze automata-based programs (also called program automata).  These
+are finite-state automata equipped with integer variables, and whose transitions
+are labeled by commands.
+
+Commands are either assignments (e.g., x := y+z), or guards (e.g., x < 3*y), or
+the no-op instruction skip.
+
+Some examples are available in the examples sub-directory.
+
+The tools also accepts a very small subset of C as input.  The input C programs
+are converted into program automata as a first step before the analysis.
+
+The file FORMATS provides the grammar of program automata and of the recognized
+subset of C.
+
+The iic tool also accepts a region (i.e., a set of configurations given as a map
+from locations to predicates) as input.  The grammar of regions is also provided
+in the file FORMATS.
+
+
+Tool invocation
+--------------------------------------------------------------------------------
+
+Each tool reads the input program automaton from the standard input or from the
+specified input file (if any).  Then, it performs either a forward analysis from
+the initial location, or a backward analysis from the final location.
+
+The `-help' option displays the available options.

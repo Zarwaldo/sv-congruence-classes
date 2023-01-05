@@ -1,0 +1,24 @@
+                        Software Verification (Homework)
+                        ================================
+
+
+The archive encloses a skeleton of your project with:
+
+- This README file.
+
+- A description of the project in 'homework.pdf'.  Refer to this PDF file for
+  further information on the contents of this archive.
+
+
+What to code
+------------
+
+You need to implement the OCaml module lib/DomCongruence.ml.  Refer to the PDF
+file 'homework.pdf' for details.
+
+
+How and when to send your homework
+----------------------------------
+
+The deadline for the project is on Friday, January 20, 2023 at 23h59 (CET).
+Refer to 'homework.pdf' for details on how to send your homework.

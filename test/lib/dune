@@ -1,0 +1,5 @@
+(library
+  (name spatest)
+  (public_name spatest)
+  (wrapped false)
+  (libraries spa))

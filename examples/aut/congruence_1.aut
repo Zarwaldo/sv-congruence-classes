@@ -1,0 +1,58 @@
+# Example to test the congruence domain.  This example focusses on
+# congruence classes that are singletons.
+
+Congruence_1
+{
+    var x, y, z;
+
+    initial q_01;
+    final q_bad;
+
+    from q_01
+    | x := 5 --> q_02;
+
+    from q_02
+    | x != 5 --> q_bad;
+    | x < 2 --> q_bad;
+    | x <= 3 --> q_bad;
+    | x >= 7 --> q_bad;
+    | x > 8 --> q_bad;
+    | x+8 != 13 --> q_bad;
+    | x-8 != -3 --> q_bad;
+    | 0*x != 0 --> q_bad;
+    | x*3 != 15 --> q_bad;
+    | x/2 != 2 --> q_bad;
+    | x/3 != 1 --> q_bad;
+    | 2/x != 0 --> q_bad;
+    | -7/x != -1 --> q_bad;
+    | x*y == 18 --> q_bad;
+
+    from q_02
+    | x*y == 15 --> q_03;
+
+    from q_03
+    | y*z == x --> q_bad;
+    | y*z - x == y --> q_bad;
+
+    from q_03
+    | z := x + y --> q_04;
+    | z := y + x --> q_04;
+    | z == x + y --> q_04;
+    | z := x - y --> q_05;
+    | x == y + z --> q_05;
+    | z := y - x --> q_06;
+    | x + z == y --> q_06;
+    | z := x * y --> q_07;
+    | z := y * x --> q_07;
+    | z := x / y --> q_08;
+    | z := y / x --> q_09;
+
+    from q_04
+    | z == x - y --> q_bad;
+    | x*y*z <= x + y + z --> q_bad;
+    | z/x > y --> q_bad;
+
+    from q_05
+    | x + y + z != 10 --> q_bad;
+    | x * y * z != 30 --> q_bad;
+}

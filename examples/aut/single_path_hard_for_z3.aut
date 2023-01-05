@@ -1,0 +1,23 @@
+# Single-path program whose verification yields satisfiability queries that
+# cannot be successfully checked with Z3 (the latter returns unknown or loops
+# forever).
+#
+# This concerns bounded model-checking, inductive invariant checking and static
+# abstract interpretation with predicate abstraction.
+
+Single_Path_Hard_for_Z3
+{
+    var x, y;
+
+    initial q_0;
+    final q_bad;
+
+    from q_0
+    | x == 3 * (x / 3) --> q_1;
+
+    from q_1
+    | x := x * y --> q_2;
+
+    from q_2
+    | x - 1 == 3 * (x / 3) --> q_bad;
+}

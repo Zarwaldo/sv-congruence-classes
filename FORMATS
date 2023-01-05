@@ -1,0 +1,103 @@
+This file specifies the grammars of the file formats accepted by the Spa tools.
+
+In the grammars below, <natural> corresponds to nonnegative integers that can be
+represented by the OCaml int type.
+
+
+Program Automata (.aut)
+--------------------------------------------------------------------------------
+
+<automaton> ::=   ID '{' <declaration>^* '}'
+
+<declaration> ::= "var" ID (',' ID)^* ';'
+|                 "initial" ID ';'
+|                 "final" ID ';'
+|                 "from" ID <transition>^*
+
+<transition> ::=  '|' <command> "-->" ID ';'
+
+<command> ::=     ID ":=" <expr>
+|                 <expr> ("==" | "<" | ">" | "<=" | ">=" | "!=") <expr>
+|                 "skip"
+
+<expr> ::=        <natural>
+|                 ID
+|                 '(' <expr> ')'
+|                 <expr> ('+' | '-' | '*' | '/') <expr>
+|                 '-' <expr>
+
+Comments start with '#'.
+
+
+Simple C Programs (.c or .prg)
+--------------------------------------------------------------------------------
+
+<procedure> ::=   "int" ID '(' ')' '{' <vardecl>^* <statement>^* '}'
+
+<vardecl> ::=     "int" ID (',' ID)^* ';'
+
+<statement> ::=   <assignments> ';'
+|                 "if" '(' <condition> ')' <statement> ["else" <statement>]
+|                 "while" '(' <condition> ')' <statement>
+|                 "for" '(' <assignments> ';' <condition> ';' <assignments> ')'
+                  <statement>
+|                 '{' <statement>^* '}'
+|                 "skip" ';'
+|                 "assert" '(' <condition> ')' ';'
+
+<assignments> ::= <assignment> (',' <assignment>)^*
+|                 EPSILON
+
+<assignment> ::=  ID '=' <expr>
+|                 ID ("++" | "--")
+
+<condition> ::=   <expr> ("==" | "<" | ">" | "<=" | ">=" | "!=") <expr>
+|                 <expr>
+|                 '*'
+
+<expr> ::=        <natural>
+|                 ID
+|                 '(' <expr> ')'
+|                 <expr> ('+' | '-' | '*' | '/') <expr>
+|                 '-' <expr>
+
+Comments either start with '#' or "//", or are enclosed between "/*" and "*/".
+
+The special '*' condition is used to model non-deterministic choice.  It is non-
+deterministically evaluated to true or false (and with no memory of the previous
+evaluation).  This special condition is not allowed in standard C.
+
+The no-op instruction "skip" can be used to enforce the creation of a location
+in the program automaton obtained from the C program.  This special instruction
+is not allowed in standard C as well.
+
+
+Logic: Term Lists, Predicate Lists, and Regions
+--------------------------------------------------------------------------------
+
+<term-list> ::=   <term-decl>^*
+
+<term-decl> ::=   <term> ';'
+
+<pred-list> ::=   <pred-decl>^*
+
+<pred-decl> ::=   <predicate> (',' <predicate>)^* ';'
+
+<region> ::=      <region-decl>^*
+
+<region-decl> ::= ID ':' <predicate> (',' <predicate>)^* ';'
+
+<predicate> ::=   tt
+|                 ff
+|                 <term> ("==" | "<" | ">" | "<=" | ">=" | "!=") <term>
+|                 '(' <predicate> ')'
+|                 <predicate> ("&&" | "||" | "=>" | "<=>") <predicate>
+|                 '!' <predicate>
+
+<term> ::=        <natural>
+|                 ID
+|                 '(' <term> ')'
+|                 <term> ('+' | '-' | '*' | '/' | '%' | '^') <term>
+|                 '-' <term>
+
+Comments start with '#'.

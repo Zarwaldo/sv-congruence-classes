@@ -1,0 +1,60 @@
+# Example to test the congruence domain.  This example focusses on
+# congruence classes that are infinite sets.
+
+Congruence_2
+{
+    var x, y, z;
+
+    initial q_01;
+    final q_bad;
+
+    from q_01
+    | x := -9 --> q_02;
+    | x := 3 --> q_02;
+
+    from q_02
+    | y := 10 --> q_03;
+    | y := 18 --> q_03;
+
+    from q_03
+    | x := x + 12 --> q_03;
+    | x := x + (3 * y) - 6 --> q_03;
+    | y := y - 8 --> q_03;
+    | x == y --> q_bad;
+    | x - 1 == y --> q_04;
+    | x == 6 * z --> q_bad;
+    | y == 4 * z --> q_bad;
+    | x + y == 2 * z --> q_bad;
+
+    from q_03
+    | z := x + y --> q_05;
+    | z := y - x --> q_06;
+    | z := x * y --> q_07;
+    | z := x / y --> q_08;
+    | z := 5 / y --> q_09;
+    | z := 7 / (x - 1) --> q_10;
+
+    from q_10
+    | y == z --> q_11;
+    | x + y == z --> q_12;
+    | x + y * (1 + z) == -1 --> q_13;
+
+    from q_05
+    | x + y + z == 0 --> q_bad;
+    | x * y * z == 0 --> q_bad;
+
+    from q_06
+    | x + y + z == 2 --> q_bad;
+    | x * y * z == 2 --> q_bad;
+
+    from q_07
+    | x + y + z == 0 --> q_bad;
+    | x * y * z == 0 --> q_bad;
+
+    from q_08
+    | x * y == 12 --> q_bad;
+
+    from q_09
+    | z := z + 2 --> q_09;
+    | z == 1 --> q_bad;
+}

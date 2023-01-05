@@ -1,0 +1,17 @@
+# Simple example from the lecture on inductive invariants.
+
+Example
+{
+    var x;
+
+    initial A;
+    final C;
+
+    from A
+    | x := 1 --> B;
+
+    from B
+    | x := 5 * x --> B;
+    | x := x + 2 --> B;
+    | x < 0 --> C;
+}

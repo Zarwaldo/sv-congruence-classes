@@ -1,0 +1,25 @@
+# $Id: be806432b06f3c1fe03c79b4656850d0655c591a $
+
+# Source directories
+<bin>: include
+<lib>: include
+<test/bin>: include
+<test/lib>: include
+
+# Required libraries
+true: thread
+true: package(zarith)
+true: use_str
+
+# Use the same compilation flags as dune
+true: strict_sequence, strict_formats, short_paths, keep_locs
+true: no_alias_deps, opaque
+true: debug, bin_annot
+
+# Code optimization for native-code compilation
+true: optimize(3)
+
+# Enable all warnings by default except the following ones:
+# - 44 : Open statement shadows an already defined identifier
+# - 67 : Unused functor parameter
+true: warn(+A-44-67)

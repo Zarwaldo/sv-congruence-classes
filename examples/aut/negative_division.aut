@@ -1,0 +1,19 @@
+# Example with a negative division (-5) / 2.  The final location q_bad is
+# not reachable since (-5) / 2 = - (5 / 2) = -2 in C, OCaml, etc.
+
+Negative_Division
+{
+    var x, y;
+
+    initial q_0;
+    final q_bad;
+
+    from q_0
+    | x := -5 --> q_1;
+
+    from q_1
+    | y := x / 2 --> q_2;
+
+    from q_2
+    | y != -2 --> q_bad;
+}

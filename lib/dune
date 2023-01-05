@@ -1,0 +1,21 @@
+(ocamllex
+  (modules AutLexer PrgLexer))
+(menhir
+  (modules AutParser PrgParser))
+
+(library
+  (name spa)
+  (public_name spa)
+  (modules_without_implementation
+    AbstractDomain
+    DiGraph
+    Fixpoint
+    Lattice
+    NumericalDomain)
+  (private_modules
+    AutLexer
+    AutParser
+    PrgLexer
+    PrgParser)
+  (wrapped false)
+  (libraries str unix zarith))

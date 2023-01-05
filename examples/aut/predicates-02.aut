@@ -1,0 +1,18 @@
+# Second example for predicate abstraction.
+
+Predicates_2
+{
+    var x, y;
+
+    initial q_0;
+    final q_bad;
+
+    from q_0
+    | x >= 0 --> q_1;
+
+    from q_1
+    | y := x --> q_2;
+
+    from q_2
+    | y < 0 --> q_bad;
+}

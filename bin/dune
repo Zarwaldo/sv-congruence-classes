@@ -1,0 +1,4 @@
+(executables
+  (names sai)
+  (modes byte native)
+  (libraries spa))
