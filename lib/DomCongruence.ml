@@ -29,10 +29,30 @@ let leq a b =
   | (Val(a, b), Val(u, v)) -> (Z.equal (Z.rem v b) Z.zero) && (Z.equal (Z.rem v (Z.sub a u)) Z.zero)
 
 let glb a b =
-  failwith "DomCongruence.glb not implemented."
+    match (a, b) with
+   | (Val(r1, m1), Val(r2, m2)) -> 
+    let (pgcd, u, _) = Z.gcdext m1 m2 in
+    if Z.divisible (Z.sub r2 r1) pgcd then
+      let k = Z.div (Z.sub r2 r1) pgcd in
+      let k1 = Z.mul u k in
+      let m = Z.mul m1 (Z.div m2 pgcd) in
+      let r = Z.rem (Z.add (Z.mul m1 k1) r1) m in
+      Val(r, m)
+    else
+      Bot
+   | (Val(_, _), Bot)
+   | (Bot, Val(_, _))
+   | (Bot, Bot) -> Bot
 
 let lub a b =
-  failwith "DomCongruence.lub not implemented."
+  match (a, b) with
+ | (Val(r1, m1), Val(r2, m2)) ->
+  let m = Z.gcd m1 (Z.gcd m2 (Z.sub r2 r1)) in
+  let r = Z.rem r1 m in
+  Val(r, m)
+ | (Val(r1, m1), Bot) -> Val(r1, m1)
+ | (Bot, Val(r2, m2)) -> Val(r2, m2)
+ | (Bot, Bot) -> Bot
 
 let abs x =
   Val(Z.of_int x, Z.zero)
