@@ -3,9 +3,6 @@ type t =
   | Bot
   | Val of Z.t * Z.t
 
-open Z
-open Z.Compare
-
 let print fmt =
   function
   | Bot -> Format.pp_print_string fmt "⊥"
