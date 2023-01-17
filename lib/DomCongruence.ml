@@ -19,17 +19,17 @@ let equal a b =
   | (Bot, Bot) -> true
   | (Bot, _) -> false
   | (_, Bot) -> false
-  | (Val(r1, m1), Val(r2, m2)) -> (Z.equal r1 r2) && (Z.equal m1 m2)
+  | (Val(a, b), Val(u, v)) -> (Z.equal a u) && (Z.equal b v)
 
 let leq a b =
   match (a, b) with
   | (Bot, Bot) -> true
   | (Bot, _) -> false
   | (_, Bot) -> false
-  | (Val(r1, m1), Val(r2, m2)) when (Z.equal m1 Z.zero) && (Z.equal r1 r2) -> true
-  | (Val(r1, m1), Val(r2, m2)) when (Z.equal r1 r2) -> (Z.equal (Z.rem m2 m1) Z.zero)
-  | (Val(r1, m1), Val(r2, m2)) when (Z.equal m1 Z.zero) -> (Z.equal (Z.rem m2 (Z.sub r1 r2)) Z.zero)
-  | (Val(r1, m1), Val(r2, m2)) -> (Z.equal (Z.rem m2 m1) Z.zero) && (Z.equal (Z.rem m2 (Z.sub r1 r2)) Z.zero)
+  | (Val(a, b), Val(u, _)) when (Z.equal b Z.zero) && (Z.equal a u) -> true
+  | (Val(a, b), Val(u, v)) when (Z.equal a u) -> (Z.equal (Z.rem v b) Z.zero)
+  | (Val(a, b), Val(u, v)) when (Z.equal b Z.zero) -> (Z.equal (Z.rem v (Z.sub a u)) Z.zero)
+  | (Val(a, b), Val(u, v)) -> (Z.equal (Z.rem v b) Z.zero) && (Z.equal (Z.rem v (Z.sub a u)) Z.zero)
 
 let glb a b =
   failwith "DomCongruence.glb not implemented."
