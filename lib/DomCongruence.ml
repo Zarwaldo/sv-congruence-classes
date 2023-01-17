@@ -26,6 +26,9 @@ let leq a b =
   | (Bot, Bot) -> true
   | (Bot, _) -> false
   | (_, Bot) -> false
+  | (Val(r1, m1), Val(r2, m2)) when (Z.equal m1 Z.zero) && (Z.equal r1 r2) -> true
+  | (Val(r1, m1), Val(r2, m2)) when (Z.equal r1 r2) -> (Z.equal (Z.rem m2 m1) Z.zero)
+  | (Val(r1, m1), Val(r2, m2)) when (Z.equal m1 Z.zero) -> (Z.equal (Z.rem m2 (Z.sub r1 r2)) Z.zero)
   | (Val(r1, m1), Val(r2, m2)) -> (Z.equal (Z.rem m2 m1) Z.zero) && (Z.equal (Z.rem m2 (Z.sub r1 r2)) Z.zero)
 
 let glb a b =
@@ -48,12 +51,18 @@ struct
     match (a, b) with
     | (Bot, _) -> Bot
     | (_, Bot) -> Bot
+    | (Val(a, b), Val(u, v)) when (Z.equal b Z.zero) && (Z.equal v Z.zero) -> Val(Z.add a u, Z.zero)
+    | (Val(a, b), Val(u, v)) when (Z.equal b Z.zero) -> Val(Z.rem (Z.add a u) v, v)
+    | (Val(a, b), Val(u, v)) when (Z.equal v Z.zero) -> Val(Z.rem (Z.add a u) b, b)
     | (Val(a, b), Val(u, v)) -> let d = Z.gcd b v in Val(Z.rem (Z.add a u) d, d)
 
   let sub a b =
     match (a, b) with
     | (Bot, _) -> Bot
     | (_, Bot) -> Bot
+    | (Val(a, b), Val(u, v)) when (Z.equal b Z.zero) && (Z.equal v Z.zero) -> Val(Z.sub a u, Z.zero)
+    | (Val(a, b), Val(u, v)) when (Z.equal b Z.zero) -> Val(Z.rem (Z.sub a u) v, v)
+    | (Val(a, b), Val(u, v)) when (Z.equal v Z.zero) -> Val(Z.rem (Z.sub a u) b, b)
     | (Val(a, b), Val(u, v)) -> let d = Z.gcd b v in Val(Z.rem (Z.sub a u) d, d)
 
   let mul a b =
@@ -67,6 +76,7 @@ struct
     | (Bot, _) -> Bot
     | (_, Bot) -> Bot
     | (Val(_, _), Val(_, v)) when not (Z.equal v Z.zero) -> top
+    | (Val(_, _), Val(u, _)) when (Z.equal u Z.zero) -> bot
     | (Val(a, _), Val(u, _)) when not (Z.equal (Z.rem a u) Z.zero) -> top
     | (Val(_, b), Val(u, _)) when not (Z.equal (Z.rem b u) Z.zero) -> top
     | (Val(a, b), Val(u, _)) -> Val(Z.div a u, Z.div b u)
