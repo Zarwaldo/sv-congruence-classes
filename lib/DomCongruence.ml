@@ -9,7 +9,14 @@ open Z.Compare
 let print fmt =
   function
   | Bot -> Format.pp_print_string fmt "⊥"
-  | Val (r, m) -> Format.fprintf fmt "%d + %dℤ" (Z.to_int r) (Z.to_int m)
+  | Val (r, m) -> 
+    if m = Z.zero then
+      Format.fprintf fmt "%d" (Z.to_int r)
+    else
+      if r = Z.zero then
+        if m = Z.one then Format.pp_print_string fmt "ℤ"
+        else Format.fprintf fmt "%dℤ" (Z.to_int m)
+      else Format.fprintf fmt "(%d + %dℤ)" (Z.to_int r) (Z.to_int m)
 
 let bot = Bot
 let top = Val(Z.zero, Z.one)
@@ -23,8 +30,8 @@ let equal a b =
 
 let leq a b =
   match (a, b) with
-  | (Bot, Bot) -> true
-  | (Bot, _) -> false
+  | (Bot, Bot)
+  | (Bot, _) -> true
   | (_, Bot) -> false
   | (Val(r1, m1), Val(r2, m2)) when (Z.equal m1 Z.zero) && (Z.equal r1 r2) -> true
   | (Val(r1, m1), Val(r2, m2)) when (Z.equal r1 r2) -> (Z.equal (Z.rem m2 m1) Z.zero)
@@ -39,7 +46,7 @@ let glb a b =
       let k = Z.div (Z.sub r2 r1) pgcd in
       let k1 = Z.mul u k in
       let m = Z.mul m1 (Z.div m2 pgcd) in
-      let r = Z.rem (Z.add (Z.mul m1 k1) r1) m in
+      let r = Z.erem (Z.add (Z.mul m1 k1) r1) m in
       Val(r, m)
     else
       Bot
@@ -51,7 +58,7 @@ let lub a b =
   match (a, b) with
  | (Val(r1, m1), Val(r2, m2)) ->
   let m = Z.gcd m1 (Z.gcd m2 (Z.sub r2 r1)) in
-  let r = Z.rem r1 m in
+  let r = Z.erem r1 m in
   Val(r, m)
  | (Val(r1, m1), Bot) -> Val(r1, m1)
  | (Bot, Val(r2, m2)) -> Val(r2, m2)
@@ -108,8 +115,17 @@ struct
     failwith "DomCongruence.inequality not implemented."
 end
 
-let widen =
-    failwith "DomCongruence.widen not implemented."
+let widen a b =
+  match (a, b) with
+    | (Bot, Val(r2, m2)) -> Val(r2, m2)
+    | (Val(r1, m1), Bot) -> Val(r1, m1)
+    | (Bot, Bot) -> Bot
+    | (Val(r1, m1), Val(r2, m2)) -> if m1 > m2 then top else Val(r2, m2)
 
 let narrow a b =
-    failwith "DomCongruence.narrow not implemented."
+  match (a, b) with
+    | (Bot, Val(_, _))
+    | (Val(_, _), Bot)
+    | (Bot, Bot) -> Bot
+    | (Val(r1, m1), Val(_, _)) -> Val(r1, m1)
+    | (top, Val(r2, m2)) -> Val(r2, m2)
