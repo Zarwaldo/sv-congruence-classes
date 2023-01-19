@@ -12,8 +12,8 @@ let print fmt =
     else
       if r = Z.zero then
         if m = Z.one then Format.pp_print_string fmt "ℤ"
-        else Format.fprintf fmt "%dℤ" (Z.to_int m)
-      else Format.fprintf fmt "(%d + %dℤ)" (Z.to_int r) (Z.to_int m)
+        else Format.fprintf fmt "%dℤ" (Z.to_int (Z.abs m))
+      else Format.fprintf fmt "(%d + %dℤ)" (Z.to_int r) (Z.to_int (Z.abs m))
 
 let bot = Bot
 let top = Val(Z.zero, Z.one)
