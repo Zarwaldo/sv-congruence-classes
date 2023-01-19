@@ -112,15 +112,26 @@ struct
     | (_, Bot) -> Bot
     | (Val(a, b), Val(u, v)) -> add (Val(Z.mul a u, Z.zero)) (add (Val(Z.zero, Z.mul a v)) (add (Val(Z.zero, Z.mul b u)) (Val(Z.zero, Z.mul b v))))
 
-  let div a b =
+  let rec div a b =
     match (a, b) with
     | (Bot, _) -> Bot
     | (_, Bot) -> Bot
-    | (Val(_, _), Val(_, v)) when not (Z.equal v Z.zero) -> top
-    | (Val(_, _), Val(u, _)) when (Z.equal u Z.zero) -> bot
-    | (Val(a, _), Val(u, _)) when not (Z.divisible a u) -> top
-    | (Val(_, b), Val(u, _)) when not (Z.divisible b u) -> top
-    | (Val(a, b), Val(u, _)) -> Val(Z.div a u, Z.div b u)
+    | (Val(a, b), Val(u, v)) when (Z.equal v Z.zero) && (Z.equal u Z.zero) -> Bot
+    | (Val(a, b), Val(u, v)) when (Z.equal v Z.zero) && (Z.equal b Z.zero) -> Val(Z.div a u, Z.zero)
+    | (Val(a, b), Val(u, v)) when (Z.equal v Z.zero) && (Z.divisible a u) && (Z.divisible b u) -> Val(Z.div a u, Z.div b u)
+    | (Val(a, b), Val(u, v)) when (Z.equal v Z.zero) && (Z.divisible b u) -> Val(Z.zero, Z.one)
+    | (Val(_, _), Val(_, v)) when (Z.equal v Z.zero) -> top
+    | (Val(a, b), Val(u, v)) when (Z.equal a Z.zero) && (Z.equal b Z.zero) -> Val(Z.zero, Z.zero)
+    | (Val(a, b), Val(u, v)) when (Z.equal b Z.zero) && (Z.gt a Z.zero) && (Z.gt u Z.zero) ->
+      let n = Z.add (Z.mul v (Z.div (Z.sub a u) v)) u in
+      if (Z.leq n Z.zero) then Val(Z.zero, Z.zero) else Val(Z.zero, Z.div a n)
+    | (Val(a, b), Val(u, v)) when (Z.equal b Z.zero) && (Z.lt a Z.zero) && (Z.gt u Z.zero) ->
+      sub (Val(Z.zero, Z.zero)) (div (Val(Z.neg a, Z.neg b)) (Val(u, v)))
+    | (Val(a, b), Val(u, v)) when (Z.equal b Z.zero) && (Z.gt a Z.zero) && (Z.lt u Z.zero) ->
+      sub (Val(Z.zero, Z.zero)) (div (Val(a, b)) (Val(Z.neg u, Z.neg v)))
+    | (Val(a, b), Val(u, v)) when (Z.equal b Z.zero) && (Z.lt a Z.zero) && (Z.lt u Z.zero) ->
+      div (Val(Z.neg a, Z.neg b)) (Val(Z.neg u, Z.neg v))
+    | (Val(a, b), Val(u, v)) -> top
 
   let equality a b c =
     failwith "DomCongruence.equality not implemented."
