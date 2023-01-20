@@ -3,6 +3,12 @@ type t =
   | Bot
   | Val of Z.t * Z.t
 
+(* Checks that a value of type t is a legal abstract congruence domain. *)
+let legal =
+  function
+  | Bot -> true
+  | Val (r1, m1) -> if m1 = Z.zero then true else (r1 < m1) && (r1 >= Z.zero)
+
 let print fmt =
   function
   | Bot -> Format.pp_print_string fmt "⊥"
@@ -134,23 +140,15 @@ struct
     | (Val(_, _), Val(_, _)) -> top
 
   let equality a b c =
-    failwith "DomCongruence.equality not implemented."
+    match (a, b, c) with
+     | (_, _, _) -> Bot
 
   let inequality a b c =
-    failwith "DomCongruence.inequality not implemented."
+    match (a, b, c) with
+     | (_, _, _) -> Bot
+
 end
 
-let widen a b =
-  match (a, b) with
-    | (Bot, Val(r2, m2)) -> Val(r2, m2)
-    | (Val(r1, m1), Bot) -> Val(r1, m1)
-    | (Bot, Bot) -> Bot
-    | (Val(_, m1), Val(r2, m2)) -> if m1 > m2 then top else Val(r2, m2)
+let widen a b = lub a b
 
-let narrow a b =
-  match (a, b) with
-    | (Bot, Val(_, _))
-    | (Val(_, _), Bot)
-    | (Bot, Bot) -> Bot
-    | (t, Val(r2, m2)) when equal t top -> Val(r2, m2)
-    | (Val(r1, m1), Val(_, _)) -> Val(r1, m1)
+let narrow a b = b
