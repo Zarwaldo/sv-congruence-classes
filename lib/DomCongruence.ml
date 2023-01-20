@@ -134,10 +134,69 @@ struct
     | (Val(_, _), Val(_, _)) -> top
 
   let equality a b c =
-    failwith "DomCongruence.equality not implemented."
+    top
+    (*
+    L'implémentation suivante est incorrecte.
+    match (a, b) with
+    | (Bot, _) -> Bot
+    | (_, Bot) -> Bot
+    | (Val(r1, m1), Val(r2, m2)) when (Z.equal m1 Z.zero) && (Z.equal m2 Z.zero) && (Z.equal r1 Z.zero) ->
+      if (Z.equal r2 Z.zero)
+      then c
+      else Bot
+    | (Val(r1, m1), Val(r2, m2)) when (Z.equal m1 Z.zero) && (Z.equal m2 Z.zero) ->
+      if Z.divisible r2 r1
+      then glb c (Val(Z.neg (Z.div r2 r1), Z.zero))
+      else Bot
+    | (Val(r1, m1), Val(r2, m2)) ->
+      let k = if (Z.equal m2 Z.zero) then m1 else if (Z.equal m1 Z.zero) then m2 else (Z.gcd m1 m2) in
+      if Z.equal (Z.erem r1 k) Z.zero then
+        if Z.equal (Z.erem r2 k) Z.zero
+        then c
+        else Bot
+      else
+        let (d, u, _) = if (Z.equal r1 Z.zero) then (k, Z.zero, Z.one) else if (Z.equal k Z.zero) then (r1, Z.one, Z.zero) else (Z.gcdext r1 k) in
+        if Z.divisible (Z.erem r2 k) (Z.erem d k) then
+          let x = Z.erem (Z.mul (Z.div (Z.neg (Z.erem r2 k)) (Z.erem d k)) u) k in
+          glb c (Val(x, k))
+        else
+          Bot
+    *)
 
   let inequality a b c =
-    failwith "DomCongruence.inequality not implemented."
+    top
+    (*
+    L'implémentation suivante est incorrecte.
+    match (a, b, c) with
+    | (Bot, _, _) -> Bot
+    | (_, Bot, _) -> Bot
+    | (_, _, Bot) -> Bot
+    | (Val(r1, m1), Val(r2, m2), Val(r3, m3)) ->
+      if Z.equal m2 Z.zero then
+        if Z.equal m1 Z.zero then
+          if Z.equal r1 Z.zero then
+            if Z.leq r2 Z.zero
+            then
+              c
+            else
+              bot
+          else
+            if Z.leq r2 Z.zero
+            then
+              c
+            else
+              if Z.equal m3 Z.zero
+              then
+                if Z.leq (Z.add (Z.mul r1 r3) r2) Z.zero
+                then c
+                else bot
+              else
+                bot
+        else
+          c
+      else
+        c
+    *)
 end
 
 let widen a b =
