@@ -133,7 +133,7 @@ struct
       div (Val(Z.neg a, Z.neg b)) (Val(Z.neg u, Z.neg v))
     | (Val(_, _), Val(_, _)) -> top
 
-  let equality a b c =
+  let equality _ _ _ =
     top
     (*
     L'implémentation suivante est incorrecte.
@@ -163,7 +163,7 @@ struct
           Bot
     *)
 
-  let inequality a b c =
+  let inequality _ _ _ =
     top
     (*
     L'implémentation suivante est incorrecte.
